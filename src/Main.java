@@ -68,6 +68,7 @@ public class Main {
 
     private static void createAFile(String filename) throws IOException {
         try{
+            filename = filename.contains("?") ? filename.split("\\?")[0] : filename;
             File file = new File("Storage/"+baseUrl.split("//")[1]+filename);
             if(!file.exists()){
                 if(file.getParentFile() != null){
@@ -84,7 +85,7 @@ public class Main {
     private static void DownloadANavigationLink(String filename,Integer fileSize) throws IOException{
         try{
             BufferedReader webReader = new BufferedReader(new InputStreamReader(url.openStream()));
-
+            filename = filename.contains("?") ? filename.split("\\?")[0] : filename;
             filename = filename.split("\\.")[0].length() == 0 ? "home.html" : filename.split("\\.")[0] + ".html";
 
             createAFile(filename);
