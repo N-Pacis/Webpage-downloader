@@ -16,6 +16,7 @@ public class Main {
     private static URL url;
     private static Scanner scan = new Scanner(System.in);
     private static String baseUrl;
+    private static String[] webLinks;
 
     private static String[] getWebsiteNavigationLinks() throws IOException {
         String[] webLinks = {};
@@ -116,8 +117,6 @@ public class Main {
 
     private static void download() throws IOException {
         try{
-            String webLinks[] = getWebsiteNavigationLinks();
-
             for(int i=0;i<webLinks.length;i++){
                 webLinks[i] = filterUnwantedKeywords(webLinks[i]);
 
@@ -137,16 +136,39 @@ public class Main {
         }
     }
 
+    private static void validateNavigationLinks(String baseUrl) throws IOException {
+        webLinks = getWebsiteNavigationLinks();
+        if(webLinks.length < 1){
+            error.log("INVALID URL!Try again and make sure the format is 'https://website.com/': ");
+            generateInput();
+        }
+    }
+
+    private static void validateUrl(String baseUrl) throws IOException{
+        try{
+            url = new URL(baseUrl);
+        }
+        catch(Exception e){
+            error.log("Try again make sure the format is 'https://website.com/' , you got this error:"+e.getMessage());
+            generateInput();
+        }
+    }
+
+    private static void generateInput() throws IOException {
+        baseUrl = scan.nextLine();
+        validateUrl(baseUrl);
+        validateNavigationLinks(baseUrl);
+    }
+
     public static void main(String[] args) throws IOException{
         try{
-            System.out.println("Enter the website you want to clone(format: https://website.com)");
-            baseUrl = scan.nextLine();
-            url = new URL(baseUrl);
+            System.out.println("Enter the website you want to clone(format: https://website.com/)");
+            generateInput();
 
             download();
         }
         catch(Exception e){
-            error.log(e.getMessage());
+            System.out.println(e);
         }
     }
 }
