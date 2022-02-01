@@ -16,8 +16,6 @@ public class Main {
     private static URL url;
     private static Scanner scan = new Scanner(System.in);
     private static String baseUrl;
-    private static String[] webLinks;
-
     private static String[] getWebsiteNavigationLinks() throws IOException {
         String[] webLinks = {};
         try{
@@ -36,6 +34,10 @@ public class Main {
             }
             webLinks = webpageLinks.toArray(new String[webpageLinks.size()]);
             reader.close();
+            if(webLinks.length == 0){
+                warning.log("The provided Url does not have navigation links. Please enter a different url!");
+                System.exit(1);
+            }
             return webLinks;
         }
         catch(Exception e){
@@ -116,6 +118,7 @@ public class Main {
     }
 
     private static void download() throws IOException {
+        String[] webLinks = getWebsiteNavigationLinks();
         try{
             for(int i=0;i<webLinks.length;i++){
                 webLinks[i] = filterUnwantedKeywords(webLinks[i]);
@@ -136,20 +139,12 @@ public class Main {
         }
     }
 
-    private static void validateNavigationLinks(String baseUrl) throws IOException {
-        webLinks = getWebsiteNavigationLinks();
-        if(webLinks.length < 1){
-            error.log("INVALID URL!Try again and make sure the format is 'https://website.com/': ");
-            generateInput();
-        }
-    }
-
     private static void validateUrl(String baseUrl) throws IOException{
         try{
             url = new URL(baseUrl);
         }
         catch(Exception e){
-            error.log("Try again make sure the format is 'https://website.com/' , you got this error:"+e.getMessage());
+            error.log("Try again, you got this error:"+e.getMessage());
             generateInput();
         }
     }
@@ -157,12 +152,11 @@ public class Main {
     private static void generateInput() throws IOException {
         baseUrl = scan.nextLine();
         validateUrl(baseUrl);
-        validateNavigationLinks(baseUrl);
     }
 
     public static void main(String[] args) throws IOException{
         try{
-            System.out.println("Enter the website you want to clone(format: https://website.com/)");
+            System.out.println("Enter the website you want to clone(format: https://website.com)");
             generateInput();
 
             download();
